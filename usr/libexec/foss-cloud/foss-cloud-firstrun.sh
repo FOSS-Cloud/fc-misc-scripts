@@ -28,22 +28,15 @@
 # 
 #
 
-# This script adds or removes the required NAT rules for VIP address to
-# RIP address translations.
-# For example 192.0.2.10:123 -> 192.0.2.11:123
-#
-# It should be called by a cluster ressource manager.
-#
-# The mappings are service based, and can be configured within the related
-# configuration file.
-# 
-# Usage: vip-natrules.sh service action
+fcNodeTypeFile='/etc/foss-cloud/foss-cloud_node-type'
 
 
-LIB_DIR="`dirname $0`/../lib/foss-cloud/bash"
-CONFIG_DIR="`dirname $0`/../etc/foss-cloud"
+nodeType=$( /bin/cat ${fcNodeTypeFile})
 
-source ${CONFIG_DIR}/vip-natrules.conf
-source ${LIB_DIR}/vip-natrules.lib.sh
-
-doNatRulesManagement "$1" "$2"
+case $nodeType in
+    demo)
+        /usr/local/bin/node-configuration \
+            --node-type demo-system \
+            --password admin
+        ;;
+esac

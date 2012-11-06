@@ -28,8 +28,8 @@
 # 
 #
 
-LIB_DIR="$(dirname $(readlink -f $0))/../lib/foss-cloud"
-CONFIG_DIR="$(dirname $(readlink -f $0))/../etc/foss-cloud"
+LIB_DIR="`dirname $0`/../../share/foss-cloud/lib/bash"
+CONFIG_DIR="`dirname $0`/../../../etc/foss-cloud"
 
 source "${LIB_DIR}/input-output.lib.sh"
 
