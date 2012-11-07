@@ -78,7 +78,7 @@ function getFossCloudVersion ()
 
 function getFossCloudNodeType ()
 {
-    local nodeTypeFile='/usr/local/etc/foss-cloud/foss-cloud_node-type'
+    local nodeTypeFile='/etc/foss-cloud/foss-cloud_node-type'
 
     if test -f ${nodeTypeFile}; then
         ${CAT_CMD} ${nodeTypeFile}
