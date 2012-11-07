@@ -35,7 +35,7 @@ nodeType=$( /bin/cat ${fcNodeTypeFile})
 
 case $nodeType in
     demo)
-        /usr/local/bin/node-configuration \
+        /usr/sbin/fc-node-configuration \
             --node-type demo-system \
             --password admin
         ;;
