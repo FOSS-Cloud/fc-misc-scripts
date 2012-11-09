@@ -1,0 +1,21 @@
+# /etc/conf.d/glustermount
+
+# IP addresses or host names of the GlusterFS servers, separated by space
+GLUSTERMOUNT_SERVERS_virtualization="<FOSS-CLOUD-GLUSTERFS-SERVERS>"
+
+# GlusterFS mount options,
+# see http://www.gluster.com/community/documentation/index.php/Gluster_3.2:_Manually_Mounting_Volumes
+GLUSTERMOUNT_OPTS_virtualization=""
+
+# The name of the exported GlusterFS volume
+GLUSTERMOUNT_VOLUME_virtualization="virtualization"
+
+# The local mountpoint (directory)
+GLUSTERMOUNT_MOUNTPOINT_virtualization="/var/virtualization"
+
+# The maximum mounting retries (defaults to 3 retries)
+GLUSTERMOUNT_MAX_RETRIES_virtualization=3
+
+# The time in seconds to wait between each retry (defaults to 3 seconds)
+GLUSTERMOUNT_SLEEP_virtualization=3
+
