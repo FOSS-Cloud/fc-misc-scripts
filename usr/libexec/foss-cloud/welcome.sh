@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2011 FOSS Group
+# Copyright (C) 2013 FOSS Group
 #                    Germany
 #                    http://www.foss-group.de
 #                    support@foss-group.de
@@ -67,8 +67,8 @@ fi
 
 ${CAT_CMD} << EOF >&1
 
-                             Console/SSH-Login
-                        user: root password: admin
+               Console/SSH-Login is possible with the user 'root'
+              and the password you have set during the installation.
 
                  Documentation: http://wiki.foss-cloud.org
 
