@@ -63,12 +63,21 @@ if [ "`getFossCloudNodeType`" = "demo" ]; then
         echo "                       --->  http://${ipAddress} <---"
         echo "                         user: admin password: admin"
     fi
+
+    ${CAT_CMD} << EOF >&1
+
+                             Console/SSH-Login
+                        user: root password: admin
+EOF
+else
+    ${CAT_CMD} << EOF >&1
+
+             Console/SSH-Login is possible with the user 'root'
+           and the password you have set during the installation.
+EOF
 fi
 
 ${CAT_CMD} << EOF >&1
-
-               Console/SSH-Login is possible with the user 'root'
-              and the password you have set during the installation.
 
                  Documentation: http://wiki.foss-cloud.org
 
