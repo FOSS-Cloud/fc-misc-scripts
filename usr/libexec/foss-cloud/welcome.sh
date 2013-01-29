@@ -25,7 +25,8 @@
 # See the Licence for the specific language governing
 # permissions and limitations under the Licence.
 #
-# 
+# This script writes a welcome banner to the /etc/issue file which will be
+# displayed by the getty process on the terminals.
 #
 
 LIB_DIR="$(dirname $(readlink -f $0))/../../share/foss-cloud/lib/bash"
@@ -38,52 +39,62 @@ GREP_CMD=${GREP_CMD:="/bin/grep"}
 IP_CMD=${IP_CMD:="/sbin/ip"}
 
 dev='eth0'
+issueFile="/etc/issue"
 
-repeatCharacter '*' '80'
-echo
-fossCloudLogoWithProgramInfo
+echo > ${issueFile}
+repeatCharacter '*' '80' >> ${issueFile}
+
+echo >> ${issueFile}
+fossCloudLogoWithProgramInfo "" "" "yes" >> ${issueFile}
 
 
 if [ "`getFossCloudNodeType`" = "demo" ]; then
     inet="`${IP_CMD} addr show dev $dev 2>/dev/null | ${GREP_CMD} -m 1 inet`"
 
     if test $? -ne 0; then
-        echo ""
-        echo "                    Network device '${dev}' has no IP address."
-        echo "                  Make sure you have a cable connected to ${dev}"
-        echo "                         Afterwards reboot the system"
+        ${CAT_CMD} << EOF >> ${issueFile}
+
+                    Network device '${dev}' has no IP address.
+                  Make sure you have a cable connected to ${dev}
+                         Afterwards reboot the system
+EOF
   
     else
         ipAddress=`echo $inet | ${GREP_CMD} -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/'`
 
         # strip trailing slash
         ipAddress=${ipAddress%/}
-        echo ""
-        echo "                         Direct your web browser to:"
-        echo "                       --->  http://${ipAddress} <---"
-        echo "                         user: admin password: admin"
+
+        ${CAT_CMD} << EOF >> ${issueFile}
+
+                         Direct your web browser to:
+                       --->  http://${ipAddress} <---
+                         user: admin password: admin
+EOF
     fi
 
-    ${CAT_CMD} << EOF >&1
+    ${CAT_CMD} << EOF >> ${issueFile}
 
                              Console/SSH-Login
                         user: root password: admin
 EOF
 else
-    ${CAT_CMD} << EOF >&1
+    ${CAT_CMD} << EOF >> ${issueFile}
 
              Console/SSH-Login is possible with the user 'root'
            and the password you have set during the installation.
 EOF
 fi
 
-${CAT_CMD} << EOF >&1
+${CAT_CMD} << EOF >> ${issueFile}
 
                  Documentation: http://wiki.foss-cloud.org
 
 EOF
 
-repeatCharacter '*' '80'
-echo
+repeatCharacter '*' '80' >> ${issueFile}
+echo -e "\n" >> ${issueFile}
+echo 'This is \n.\O (\s \m \r) \t' >> ${issueFile}
+echo >> ${issueFile}
 
 exit 0

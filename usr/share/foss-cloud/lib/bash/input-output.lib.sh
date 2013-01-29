@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2012 FOSS-Group
+# Copyright (C) 2013 FOSS-Group
 #                    Germany
 #                    http://www.foss-group.de
 #                    support@foss-group.de
@@ -33,8 +33,12 @@ CAT_CMD=${CAT_CMD:="/bin/cat"}
 
 function fossCloudLogo ()
 {
-    # Font: slant
-    cat << \EOF >&1
+    local enableEscaping="$1"
+
+    if [ -z "$enableEscaping" ]; then
+
+        # Font: slant
+        cat << \EOF >&1
          __________  __________       ________                __
         / ____/ __ \/ ___/ ___/      / ____/ /___  __  ______/ /
        / /_  / / / /\__ \\__ \______/ /   / / __ \/ / / / __  /
@@ -42,12 +46,25 @@ function fossCloudLogo ()
      /_/    \____//____/____/      \____/_/\____/\__,_/\__,_/
 
 EOF
+    else
+
+        # Font: slant
+        cat << \EOF >&1
+         __________  __________       ________                __
+        / ____/ __ \\/ ___/ ___/      / ____/ /___  __  ______/ /
+       / /_  / / / /\\__ \\\\__ \\______/ /   / / __ \\/ / / / __  /
+      / __/ / /_/ /___/ /__/ /_____/ /___/ / /_/ / /_/ / /_/ /
+     /_/    \\____//____/____/      \\____/_/\\____/\\__,_/\\__,_/
+
+EOF
+    fi
 }
 
 function fossCloudLogoWithProgramInfo ()
 {
     local programName="${1:-"`getFossCloudNodeType`-node"}"
     local version="${2:-"`getFossCloudVersion`"}"
+    local enableEscaping="$3"
 
     local width=50
 
@@ -55,7 +72,7 @@ function fossCloudLogoWithProgramInfo ()
     local copyright="Copyright (C) 2010 - `${DATE_CMD} +%Y` FOSS-Group"
     local url="http://www.foss-group.de"
 
-    fossCloudLogo
+    fossCloudLogo "$enableEscaping"
 
     echo "`repeatCharacter ' ' $(( $width - ${#title} ))` ${title}"
     echo ""
