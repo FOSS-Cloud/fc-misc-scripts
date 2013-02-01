@@ -1,0 +1,4 @@
+#!/bin/sh
+# Sync installed layman overlays but do not re-fetch the list of overlays
+[ -x /usr/bin/layman ] && /usr/bin/layman --nofetch -S ${PORTAGE_QUIET:+-q}
+:
