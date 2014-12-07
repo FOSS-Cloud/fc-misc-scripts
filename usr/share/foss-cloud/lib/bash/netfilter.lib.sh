@@ -29,7 +29,7 @@
 #
 
 
-IPTABLES_CMD=${IPTABLES_CMD:="/bin/iptables"}
+IPTABLES_CMD=${IPTABLES_CMD:="/sbin/iptables"}
 
 # append a rule into a given chain, if it's not already present
 # netfilterAppendRuleIfNotPresent "test_chain" "-s 10.1.1.1 -j test_chain2"
