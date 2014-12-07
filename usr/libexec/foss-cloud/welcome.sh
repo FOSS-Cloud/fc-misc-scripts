@@ -36,7 +36,7 @@ source "${LIB_DIR}/input-output.lib.sh"
 
 CAT_CMD=${CAT_CMD:="/bin/cat"}
 GREP_CMD=${GREP_CMD:="/bin/grep"}
-IP_CMD=${IP_CMD:="/sbin/ip"}
+IP_CMD=${IP_CMD:="/bin/ip"}
 
 dev='eth0'
 issueFile="/etc/issue"
