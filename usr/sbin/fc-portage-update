@@ -101,31 +101,38 @@ echo ""
 if [[ $updateMode == "--hard" ]] ; then
     
     # branch on portage
-    cd /usr/portage
+    echo "RUN       : Check portage branch"
+    cd /usr/portage/
     portageBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
 
     # branch on portage overlay
-    cd /var/lib/layman/foss-cloud
+    echo "RUN       : Check portage-overlay branch"
+    cd /var/lib/layman/foss-cloud/
     portageOverlayBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
 
-    cd /var/lib/layman/foss-cloud
     echo "RUN       : Reset portage-overlay foss-cloud"
-    git reset --hard
+    cd /var/lib/layman/
 
-    git pull -f
+    rm -rf foss-cloud
 
+    git clone https://github.com/FOSS-Cloud/fc-portage-overlay.git
+
+    mv fc-portage-overlay foss-cloud
+    
     echo "RUN       : Checkout branch on portage-overlay" 
     cd /var/lib/layman/foss-cloud
     git checkout $portageOverlayBranch
 
-    cd /usr/portage
     echo "RUN       : Reset portage"
-    git reset --hard
+   
+    rm -rf /usr/portage/*
 
-    git pull -f
+    cd /usr/
+    
+    git clone https://github.com/FOSS-Cloud/portage.git
 
     echo "RUN       : Checkout branch on portage" 
-    cd /usr/portage
+    cd /usr/portage/
     git checkout $portageBranch
 
     echo "RUN       : Update DB portage-overlay"
