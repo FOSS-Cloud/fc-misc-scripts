@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# Copyright (C) 2006 - 2015 FOSS-Group
+#               Germany
+#               http://www.foss-group.de
+#               support@foss-group.de
+# Authors:
+# Beat Stebler <beat.stebler@foss-group.ch>
+#  
+# Licensed under the EUPL, Version 1.1 or higher as soon they
+# will be approved by the European Commission - subsequent
+# versions of the EUPL (the "Licence"); You may not use this
+# work except in compliance with the Licence.
+# 
+# You may obtain a copy of the Licence at:
+# https://joinup.ec.europa.eu/software/page/eupl
+#
+# Unless required by applicable law or agreed to in
+# writing, software distributed under the Licence is
+# distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied.
+# See the Licence for the specific language governing
+# permissions and limitations under the Licence.
+#
+
+######################################################################################################
+# Description:
+#   This script is mooving all logfiles larger then 2000k to /var/backup/log-archive
+######################################################################################################
+
+
+# Check if log archive exists
+if [ ! -d "/var/backup/log-archive" ]; then
+    mkdir /var/backup/log-archive
+fi
+
+# Move all files larger then the size below to /var/backup/log-archive
+find /var/log/ -type f -size +50M -exec ls -lh {} \; -exec mv {} /var/backup/log-archive \;
