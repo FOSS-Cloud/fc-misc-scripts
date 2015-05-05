@@ -100,12 +100,12 @@ echo ""
 
 if [[ $updateMode == "--hard" ]] ; then
     
-    # branch on portage
+    # Check branch on portage
     echo "RUN       : Check portage branch"
     cd /usr/portage/
     portageBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
 
-    # branch on portage overlay
+    # Check branch on portage overlay
     echo "RUN       : Check portage-overlay branch"
     cd /var/lib/layman/foss-cloud/
     portageOverlayBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
@@ -113,49 +113,63 @@ if [[ $updateMode == "--hard" ]] ; then
     echo "RUN       : Reset portage-overlay foss-cloud"
     cd /var/lib/layman/
 
+    # Remove the portage overlay
     rm -rf foss-cloud
 
+    # Clone portage overlay from github
     git clone https://github.com/FOSS-Cloud/fc-portage-overlay.git
 
+    # Rename the folder
     mv fc-portage-overlay foss-cloud
     
+    # Set branch as before
     echo "RUN       : Checkout branch on portage-overlay" 
     cd /var/lib/layman/foss-cloud
     git checkout $portageOverlayBranch
 
-    echo "RUN       : Reset portage"
-   
-    rm -rf /usr/portage/*
+    cd /usr
 
-    cd /usr/
-    
+    # Remove portage
+    echo "INFO      : Following mesage can be ignored"
+    rm -rf /usr/portage
+
+    echo "RUN       : Reset portage"
+
+    # Clone porgage from github
     git clone https://github.com/FOSS-Cloud/portage.git
 
+    # Set branch as before
     echo "RUN       : Checkout branch on portage" 
     cd /usr/portage/
     git checkout $portageBranch
 
+    # Update DB portage-overlay
     echo "RUN       : Update DB portage-overlay"
     layman -s foss-cloud
 
-
+    # Set permission on portage-overlay
     echo "RUN       : Setting permission portage-overlay" 
     chmod 2755 /var/lib/layman/foss-cloud
     chmod -R 755 /var/lib/layman/foss-cloud/
     chown -R portage:portage /var/lib/layman/foss-cloud/
 
+    # Set permission on porgage
     echo "RUN       : Setting permission portage" 
     chmod 2755 /usr/portage
     chmod -R 755 /usr/portage/
     chown -R portage:portage /usr/portage/
     echo ""
+
   else
 
+    # If the script is running with --sync do just a sync
     emerge --sync
 fi
 
+# Delete news
 eselect news read all &>/dev/null
 
+# Go back to the folder before
 cd $currentPwd
 echo "-----------------------------------------------------------------------------------------------"
 echo ""
