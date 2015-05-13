@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+# Copyright (C) 2006 - 2015 FOSS-Group
+#               Germany
+#               http://www.foss-group.de
+#               support@foss-group.de
+#
+# Authors:
+# Wolfgang Vogt <wvogt@ibst.de>
+# Beat Stebler <beat.stebler@foss-group.ch>
+# 
+# Licensed under the EUPL, Version 1.1 or higher as soon they
+# will be approved by the European Commission - subsequent
+# versions of the EUPL (the "Licence"); You may not use this
+# work except in compliance with the Licence.
+#
+# You may obtain a copy of the Licence at:
+# https://joinup.ec.europa.eu/software/page/eupl
+#
+# Unless required by applicable law or agreed to in
+# writing, software distributed under the Licence is
+# distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied.
+# See the Licence for the specific language governing
+# permissions and limitations under the Licence.
+#
+
+# Needed path to run as cronjob
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Set variables
+HOST=`hostname`
+BASEBACKUPDIR="/var/backup"
+RCYCLE="-2 week"
+
+# Find files in /var/log, larger then 50M
+FILELIST=$(find /var/log -size +50M -type f -exec printf "{} " \;)
+
+
+for FILENAME in $FILELIST
+do
+    FILEDIR=`dirname $FILENAME`
+
+    if [ $FILEDIR != "/var/log/archive" ] ; then
+        LOGFILEBACKUPDIR=$BASEBACKUPDIR/$HOST$FILEDIR/$(date +"%Y%m%d")
+        ARCHIV=`basename $FILENAME`_$(date +"%Y%m%d_%H%M").tar
+
+        if !(test -d $LOGFILEBACKUPDIR) ; then
+            # If backup folder does not exist, create it
+            mkdir -p $LOGFILEBACKUPDIR
+        fi
+
+        # Compressing File
+        tar -cvf $LOGFILEBACKUPDIR/$ARCHIV $FILENAME >/dev/null
+        gzip $LOGFILEBACKUPDIR/$ARCHIV >/dev/null
+        
+	# Empty file
+	# Never delete a log file, because logging will stop.
+        cat /dev/null > $FILENAME
+
+        # Find folders older then $RCYCLE
+	DIRLIST=$(ls -l $BASEBACKUPDIR/$HOST$FILEDIR | grep "^d" | awk '$9 ~ /[^A-Za-z]/ {print $9}')
+        
+	for DIRNAME in $DIRLIST
+        do
+            if [[ "$DIRNAME" < "$(date -d "$RCYCLE" +"%Y%m%d")" ]] ;  then
+                # Remove folder older then $RECYCLE
+                rm -rf $BASEBACKUPDIR/$HOST$FILEDIR/$DIRNAME
+            fi
+        done
+
+    fi
+done

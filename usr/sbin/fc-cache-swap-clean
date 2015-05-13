@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# Copyright (C) 2006 - 2015 FOSS-Group
+#               Germany
+#               http://www.foss-group.de
+#               support@foss-group.de
+#
+# Authors:
+# Wolfgang Vogt <wvogt@ibst.de>
+# Beat Stebler <beat.stebler@foss-group.ch>
+#  
+# Licensed under the EUPL, Version 1.1 or higher as soon they
+# will be approved by the European Commission - subsequent
+# versions of the EUPL (the "Licence"); You may not use this
+# work except in compliance with the Licence.
+# 
+# You may obtain a copy of the Licence at:
+# https://joinup.ec.europa.eu/software/page/eupl
+#
+# Unless required by applicable law or agreed to in
+# writing, software distributed under the Licence is
+# distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied.
+# See the Licence for the specific language governing
+# permissions and limitations under the Licence.
+#
+
+######################################################################################################
+# Description:
+#   This script is for maintenance. If the used memory incl. cache is more then 80% the cache will
+#   be droped. Additional, if swap overreache 80% well be cleared but only if only when 
+#   free memory > swap total
+######################################################################################################
+
+# For use in a cronjob environment we use this environment
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin"
+
+
+######################################################################################################
+#   variables
+######################################################################################################
+
+# Define current date and time
+CURRENT_DATE=`date +"%Y-%m-%d %H:%M"`
+
+# File to log errors and values
+LOGFILE="/var/log/syslog/memory_swap.log"
+
+# Value means, % of memory use. Change this value to adapt at your FOSS-Cloud.
+MEMTRIGGER="80"
+
+# Evaluate current values of memory (values in MB)
+MEMTOTAL=$(free -m | grep Mem | awk '{print $2'})
+MEMFREE=$(free -m | grep Mem | awk '{print $4}')
+MEMUSE=$(free -m | grep Mem | awk '{print $3}')
+MEMUSE_PERCENT=$(bc <<< $MEMUSE*100/$MEMTOTAL)
+
+	    
+# Value menas % of swap use. Change this value to adapt at your FOSS-Cloud.
+SWAPTRIGGER="80"
+
+# Evaluate current values of swap (values in MB)
+SWAPTOTAL=$(free -m | grep Swap | awk '{print $2'})
+SWAPFREE=$(free -m | grep Swap | awk '{print $4}')
+SWAPUSE=$(free -m | grep Swap | awk '{print $3}')
+SWAPUSE_PERCENT=$(bc <<< $SWAPUSE*100/$SWAPTOTAL)
+
+
+######################################################################################################
+#   store values to log files
+######################################################################################################
+
+# If log file do not exist, create it
+if [ ! -f $LOGFILE ] ; then
+   echo "Creation date = $CURRENT_DATE" > $LOGFILE
+fi
+
+# Write values to lo log file
+echo "$CURRENT_DATE MEMTOTAL: $MEMTOTAL, MEMFREE: $MEMFREE, MEMUSE: $MEMUSE, MEMUSE_PERCENT: $MEMUSE_PERCENT%, SWAPTOTAL: $SWAPTOTAL, SWAPFREE: $SWAPFREE, SWAPUSE: $SWAPUSE, SWAPUSE_PERCENT: $SWAPUSE_PERCENT%" >> $LOGFILE
+
+
+######################################################################################################
+#   clearing cache
+######################################################################################################
+
+# If the effective percentage is > memtriger execute cache drop 
+if (($MEMUSE_PERCENT > $MEMTRIGGER)) ; then
+
+    # Clear Memory Cache on Linux
+    sync; echo 3 > /proc/sys/vm/drop_caches
+fi
+
+
+######################################################################################################
+#   clearing swap
+######################################################################################################
+
+# If swap will be cleared, datas have to be stored in memory. Check if free memory-500MB  is larger 
+# then swap size.
+MEMFREE_SECURE=$(bc <<< $MEMFREE-500)
+if (($MEMFREE_SECURE > $SWAPTOTAL)) ; then
+
+    if (($SWAPUSE_PERCENT > $SWAPTRIGGER)) ; then
+
+	# Clear swap by switching of. Swapdata will be stored in memory
+        swapoff -a
+        
+	# enable swap again
+        swapon -a
+    fi
+fi
