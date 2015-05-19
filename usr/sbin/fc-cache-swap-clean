@@ -33,9 +33,6 @@
 #   free memory > swap total
 ######################################################################################################
 
-# For use in a cronjob environment we use this environment
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin"
-
 
 ######################################################################################################
 #   variables

@@ -26,8 +26,6 @@
 # permissions and limitations under the Licence.
 #
 
-# Needed path to run as cronjob
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Set variables
 HOST=`hostname`
