@@ -1,5 +1,0 @@
-# MIN HOUR DAY MONTH DAYOFWEEK
-# * * * * *
-# Cronjob for security issues
-00 04 * * * /usr/sbin/pwfcck
-~
