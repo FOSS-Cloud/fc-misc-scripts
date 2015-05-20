@@ -167,7 +167,8 @@ if [[ $updateMode == "--hard" ]] ; then
 fi
 
 # Delete news
-eselect news read all &>/dev/null
+eselect news read --quiet
+eselect news purge
 
 # Go back to the folder before
 cd $currentPwd

@@ -90,8 +90,21 @@ chmod  0755 /usr/local/
 chmod -R 755 /usr/local/
 
 echo "   RUN       : Setting permission /var/www/localhost/htdocs/vm-manager/protected/runtime/"
-chmod -R 775 /var/www/localhost/htdocs/vm-manager/protected/runtime/
+chmod -R 770 /var/www/localhost/htdocs/vm-manager/protected/runtime/
 chown -R root:apache /var/www/localhost/htdocs/vm-manager/protected/runtime/
+chmod 770 /var/www/localhost/htdocs/vm-manager/protected/runtime
+chown root:apache /var/www/localhost/htdocs/vm-manager/protected/runtime
+chmod 770 /var/www/localhost/htdocs/vm-manager/protected/runtime/cron
+chown root:apache /var/www/localhost/htdocs/vm-manager/protected/runtime/cron
+chmod 770 /var/www/localhost/htdocs/vm-manager/protected/runtime/patches
+chown root:apache /var/www/localhost/htdocs/vm-manager/protected/runtime/patches
+chmod 770 /var/www/localhost/htdocs/vm-manager/protected/runtime/patches/archive
+chown root:apache /var/www/localhost/htdocs/vm-manager/protected/runtime/patches/archive
+chmod 644 /var/www/localhost/htdocs/vm-manager/protected/runtime/cron/
+chown root:root /var/www/localhost/htdocs/vm-manager/protected/runtime/cron/*
+
+
+
 
 cd ${currentPwd}
 
