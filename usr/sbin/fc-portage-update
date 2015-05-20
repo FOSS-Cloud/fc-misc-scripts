@@ -170,7 +170,7 @@ fi
 eselect news read --quiet
 eselect news purge
 
-# Go back to the folder before
+# Go back to the folder as before
 cd $currentPwd
 echo "-----------------------------------------------------------------------------------------------"
 echo ""
