@@ -61,7 +61,7 @@ EOF
 # Check if entry is ok
 ######################################################################################################
 
-if [ $updateMode == "--hard" -o $updateMode == "--sync" ] ; then
+if [ "$updateMode" = "--hard" ] || [ "$updateMode" = "--sync" ] ; then
     echo ""
   else
     logoFOSS-Cloud
