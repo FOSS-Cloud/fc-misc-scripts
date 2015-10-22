@@ -99,8 +99,10 @@ chmod 644 /var/www/localhost/htdocs/vm-manager/protected/runtime/cron/*
 chown apache:apache /var/www/localhost/htdocs/vm-manager/protected/runtime/cron
 chmod 770 /var/www/localhost/htdocs/vm-manager/protected/runtime/patches
 chown root:apache /var/www/localhost/htdocs/vm-manager/protected/runtime/patches
-chmod 770 /var/www/localhost/htdocs/vm-manager/protected/runtime/patches/archive
-chown root:apache /var/www/localhost/htdocs/vm-manager/protected/runtime/patches/archive
+if [ -e "/var/www/localhost/htdocs/vm-manager/protected/runtime/patches/archive" ] ; then
+    chmod 770 /var/www/localhost/htdocs/vm-manager/protected/runtime/patches/archive
+    chown root:apache /var/www/localhost/htdocs/vm-manager/protected/runtime/patches/archive
+fi
 
 cd ${currentPwd}
 
