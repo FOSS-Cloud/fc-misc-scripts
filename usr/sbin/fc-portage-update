@@ -98,19 +98,18 @@ echo "   Updating portage and portage-overlays..."
 echo "-----------------------------------------------------------------------------------------------"
 echo ""
 
+# Delete Warning message of "Last emerge --sync"
+sed -i '/86400/,+9d' /usr/lib/portage/pym/_emerge/sync/old_tree_timestamp.py
+
 if [[ $updateMode == "--hard" ]] ; then
     
-    # Check branch on portage
-    echo "RUN       : Check portage branch"
-    cd /usr/portage/
-    portageBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
-
     # Check branch on portage overlay
     echo "RUN       : Check portage-overlay branch"
     cd /var/lib/layman/foss-cloud/
     portageOverlayBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
 
     echo "RUN       : Reset portage-overlay foss-cloud"
+    
     cd /var/lib/layman/
 
     # Remove the portage overlay
@@ -127,10 +126,16 @@ if [[ $updateMode == "--hard" ]] ; then
     cd /var/lib/layman/foss-cloud
     git checkout $portageOverlayBranch
 
+
+    # Check branch on portage
+    echo "RUN       : Check portage branch"
+    cd /usr/portage/
+    portageBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
+
     cd /usr
 
     # Remove portage
-    echo "INFO      : Following mesage can be ignored"
+    echo "INFO      : Mesage below can be ignored"
     rm -rf /usr/portage
 
     echo "RUN       : Reset portage"
@@ -169,6 +174,9 @@ fi
 # Delete news
 eselect news read --quiet
 eselect news purge
+
+# Delete Warning message of "Last emerge --sync"
+sed -i '/86400/,+9d' /usr/lib/portage/pym/_emerge/sync/old_tree_timestamp.py
 
 # Go back to the folder as before
 cd $currentPwd
