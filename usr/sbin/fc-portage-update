@@ -1,34 +1,72 @@
 #!/bin/bash
 #
-# Copyright (C) 2006 - 2014 FOSS-Group
+# Copyright (C) 2015 FOSS-Group GmbH
 #                    Germany
 #                    http://www.foss-group.de
 #                    support@foss-group.de
+#
 # Authors:
 # Beat Stebler <beat.stebler@foss-group.ch>
-#  
-# Licensed under the EUPL, Version 1.1 or higher as soon they
-# will be approved by the European Commission - subsequent
-# versions of the EUPL (the "Licence"); You may not use this
-# work except in compliance with the Licence.
-# 
-# You may obtain a copy of the Licence at:
-# https://joinup.ec.europa.eu/software/page/eupl
 #
-# Unless required by applicable law or agreed to in
-# writing, software distributed under the Licence is
-# distributed on an "AS IS" basis,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
-# express or implied.
-# See the Licence for the specific language governing
-# permissions and limitations under the Licence.
+# Licensed under the EUPL, Version 1.1 or higher
+# URL: https://joinup.ec.europa.eu/software/page/eupl
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
 #
 
 ######################################################################################################
-# Description:
-#   Check variables of user entered with the call of this script
-#   autobuild.sh pre  or autobuild.sh final
+# Function license
 ######################################################################################################
+
+function license () {
+
+cat << \EOF >&1
+
+Copyright (C) 2015 FOSS-Group GmbH 
+                   Germany
+                   http://www.foss-group.de
+                   support@foss-group.de
+
+Authors:
+Beat Stebler <beat.stebler@foss-group.ch>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+EOF
+}
 
 ######################################################################################################
 # Variables
@@ -37,52 +75,120 @@
 # current folder 
 currentPwd=$(pwd)
 
-updateMode=$1
+scriptName=`basename "$0"`
+
+# Get the current date and store in the variable CURRENT_DATE in the form of "2015-11-28".
+CURRENT_DATE=`date +%Y-%m-%d`
+
+# Get the current date and store in the variable DATE in the form of "Son Nov 29 10:03:01 CET 2015".
+DATE="[$(date)]"
+
+# Get the fully qualified domain name (HOST) and store it in the variable HOST in the form of <hostname>.<domain>.tld
+FQDN=`hostname --fqdn`
+
+# Get the hostname and store it in the variable HOST the form of <hostname>.
+HOST=`hostname`
+
+# Set option attribute and argument out of the command line
+OPTION="$1"
+ATTRIBUTE="$2"
+ARGUMENT=$(echo $3 | sed 's:/$::')
+
+# Define screen variables
+CHECK="FC-CHECK   :"
+WARNING="FC-WARNING :"
+RUN="FC-RUN     :"
+INFO="FC-INFO    :"
+ERROR="FC-ERROR   :"
+
+# Define line
+titleLine="**********************************************************************************"
+
+# Define Graphic
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+VIOLET=$(tput setaf 5)
+LIGHTBLUE=$(tput setaf 6)
+BOLD=$(tput bold)
+UNDERLINE=$(tput sgr 0 1)
+NORMAL=$(tput sgr0)
 
 ######################################################################################################
-# FOSS-Cloud logo
+# FOSS-Cloud Logo
 ######################################################################################################
 
-logoFOSS-Cloud ()  {
+logoFOSSCloud ()  {
+
 clear
-
-cat << \EOF >&1
-
-                     __________  __________       ________                __
-                    / ____/ __ \/ ___/ ___/      / ____/ /___  __  ______/ /
-                   / /_  / / / /\__ \\__ \______/ /   / / __ \/ / / / __  /
-                  / __/ / /_/ /___/ /__/ /_____/ /___/ / /_/ / /_/ / /_/ /
-                 /_/    \____//____/____/      \____/_/\____/\__,_/\__,_/
-EOF
+echo "${LIGHTBLUE}${BOLD}"
+echo '     __________  __________       _____  _____  ____  __  _______'
+echo '    / ____/ __ \/ ___/ ___/      / ____\/  __ \/ __ \/ / / / ___ \'
+echo '   / /_  / / / /\__ \\__ \______/ /____/ /__/_/ / / / / / / /__/ /'
+echo '  / __/ / /_/ /___/ /__/ /_____/ /__/ / /\  \/ /_/ / /_/ / /____/'
+echo ' /_/    \____//____/____/      \___/_/_/  \_/\____/\__,_/_/'
+echo ''
+echo "${NORMAL}"
 }
+
+######################################################################################################
+# Function Full Help Text
+######################################################################################################
+
+function helptext () {
+
+	echo "$titleLine"
+	echo " ${LIGHTBLUE}H E L P${NORMAL}"
+	echo "$titleLine"
+	echo
+	echo " ${LIGHTBLUE}NAME${NORMAL}"
+	echo
+	echo "    $scriptName "
+	echo
+	echo " ${LIGHTBLUE}SYNOPSIS${NORMAL}"
+	echo
+	echo "    fc-portage-update [OPTION]"
+	echo
+	echo " ${LIGHTBLUE}DESCRIPTION${NORMAL}"
+	echo
+	echo "    This tool is updating portage and portage overlay, based on:"
+	echo "       - /usr/portage"
+	echo "       - /var/lib/layman/foss-cloud "
+	echo
+	echo " ${LIGHTBLUE}OPTIONS${NORMAL}"
+	echo
+	echo "    ${BOLD}--sync${NORMAL}           Soft update of portage and overlay."
+	echo "    ${BOLD}--hard${NORMAL}           Remove portage and overlay and recreate it."
+	echo "    ${BOLD}--help${NORMAL}           Show this help."
+	echo "    ${BOLD}--license${NORMAL}        Show license."
+	echo
+	echo " ${LIGHTBLUE}MORE INFOS${NORMAL}          Use OPTION --help or http://www.foss-cloud.org"
+	echo
+	echo " ${LIGHTBLUE}AUTHOR${NORMAL}              beat.stebler@foss-group.ch"
+	echo
+	echo " ${LIGHTBLUE}COPYRIGHT (C)${NORMAL}       2016 FOSS-Group GmbH - All Rights Reserved"
+	echo "                     This is free software. There is NO WARRANTY!"
+	echo "                     Please read license $scriptName --license"
+	echo
+	exit
+}
+
 
 
 ######################################################################################################
 # Check if entry is ok
 ######################################################################################################
 
-if [ "$updateMode" = "--hard" ] || [ "$updateMode" = "--sync" ] ; then
-    echo ""
-  else
-    logoFOSS-Cloud
-    echo ""
-    echo ""
-    echo "-----------------------------------------------------------------------------------------------"
-    echo "   Please use this script as followed:"
-    echo "-----------------------------------------------------------------------------------------------"
-    echo ""
-    echo "   $0 --sync"
-    echo ""
-    echo "          - This will do a synchronization of your portage tree and portage overlay."
-    echo ""
-    echo "   $0 --hard"
-    echo ""
-    echo "          - This will do a hard reset of your portage tree and portage overlay."
-    echo "            Use --hard only, when --sync do not work."
-    echo ""
-    echo "-----------------------------------------------------------------------------------------------"
-    echo ""
-    exit
+if ( [[ \
+	"$OPTION"    = "--hard"           || \
+	"$OPTION"    = "--sync"           || \
+	"$OPTION"    = "--license"        ]] ) ; then
+	echo ""
+else
+	logoFOSSCloud
+	helptext
+	exit
 fi
 
 
@@ -91,84 +197,95 @@ fi
 ######################################################################################################
 
 
-logoFOSS-Cloud
-echo ""
-echo "-----------------------------------------------------------------------------------------------"
-echo "   Updating portage and portage-overlays..."
-echo "-----------------------------------------------------------------------------------------------"
-echo ""
+logoFOSSCloud
 
 # Delete Warning message of "Last emerge --sync"
 sed -i '/86400/,+9d' /usr/lib/portage/pym/_emerge/sync/old_tree_timestamp.py
+# sed 's/"FOSS-Cloud\/portage-overlay.git"/"FOSS-Cloud\/fc-portage-overlay.git"/g' /var/lib/layman/foss-cloud/.git/config
 
-if [[ $updateMode == "--hard" ]] ; then
-    
-    # Check branch on portage overlay
-    echo "RUN       : Check portage-overlay branch"
-    cd /var/lib/layman/foss-cloud/
-    portageOverlayBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
+if [[ $OPTION == "--hard" ]] ; then
 
-    echo "RUN       : Reset portage-overlay foss-cloud"
-    
-    cd /var/lib/layman/
+	echo ""
+	echo "$titleLine"
+	echo "Replace portage and portage-overlays..."
+	echo "$titleLine"
+	echo ""
 
-    # Remove the portage overlay
-    rm -rf foss-cloud
+	# Check branch on portage overlay
+	echo "$RUN Check portage-overlay branch"
+	cd /var/lib/layman/foss-cloud/
+	portageOverlayBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
 
-    # Clone portage overlay from github
-    git clone https://github.com/FOSS-Cloud/fc-portage-overlay.git
+	echo "$RUN Reset portage-overlay foss-cloud"
 
-    # Rename the folder
-    mv fc-portage-overlay foss-cloud
-    
-    # Set branch as before
-    echo "RUN       : Checkout branch on portage-overlay" 
-    cd /var/lib/layman/foss-cloud
-    git checkout $portageOverlayBranch
+	cd /var/lib/layman/
 
+	# Remove the portage overlay
+	rm -rf foss-cloud
 
-    # Check branch on portage
-    echo "RUN       : Check portage branch"
-    cd /usr/portage/
-    portageBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
+	# Clone portage overlay from github
+	git clone https://github.com/FOSS-Cloud/fc-portage-overlay.git
 
-    cd /usr
+	# Rename the folder
+	mv fc-portage-overlay foss-cloud
 
-    # Remove portage
-    echo "INFO      : Mesage below can be ignored"
-    rm -rf /usr/portage
+	# Set branch as before
+	echo "$RUN Checkout branch on portage-overlay" 
+	cd /var/lib/layman/foss-cloud
+	git checkout $portageOverlayBranch
 
-    echo "RUN       : Reset portage"
+	# Check branch on portage
+	echo "$RUN Check portage branch"
+	cd /usr/portage/
+	portageBranch=$(git status | grep branch -m 1 | cut -d " " -f 3)
 
-    # Clone porgage from github
-    git clone https://github.com/FOSS-Cloud/portage.git
+	cd /usr
 
-    # Set branch as before
-    echo "RUN       : Checkout branch on portage" 
-    cd /usr/portage/
-    git checkout $portageBranch
+	# Remove portage
+	echo "$INFO Mesage below can be ignored"
+	rm -rf /usr/portage
 
-    # Update DB portage-overlay
-    echo "RUN       : Update DB portage-overlay"
-    layman -s foss-cloud
+	echo "$RUN Reset portage"
 
-    # Set permission on portage-overlay
-    echo "RUN       : Setting permission portage-overlay" 
-    chmod 2755 /var/lib/layman/foss-cloud
-    chmod -R 755 /var/lib/layman/foss-cloud/
-    chown -R portage:portage /var/lib/layman/foss-cloud/
+	# Clone porgage from github
+	git clone https://github.com/FOSS-Cloud/portage.git
 
-    # Set permission on porgage
-    echo "RUN       : Setting permission portage" 
-    chmod 2755 /usr/portage
-    chmod -R 755 /usr/portage/
-    chown -R portage:portage /usr/portage/
-    echo ""
+	# Set branch as before
+	echo "$RUN Checkout branch on portage" 
+	cd /usr/portage/
+	git checkout $portageBranch
 
-  else
+	# Update DB portage-overlay
+	# echo "$RUN Update DB portage-overlay"
+	# layman -s foss-cloud
 
-    # If the script is running with --sync do just a sync
-    emerge --sync
+	# Set permission on portage-overlay
+	echo "$RUN Setting permission portage-overlay" 
+	chmod 2755 /var/lib/layman/foss-cloud
+	chmod -R 755 /var/lib/layman/foss-cloud/
+	chown -R portage:portage /var/lib/layman/foss-cloud/
+
+	# Set permission on porgage
+	echo "$RUN Setting permission portage" 
+	chmod 2755 /usr/portage
+	chmod -R 755 /usr/portage/
+	chown -R portage:portage /usr/portage/
+fi
+
+if [[ $OPTION == "--sync" ]] ; then
+
+	echo ""
+	echo "$titleLine"
+	echo "Update portage and portage-overlays..."
+	echo "$titleLine"
+	echo ""
+
+	# If the script is running with --sync do just a sync
+	emerge --sync
+fi
+
+if [[ $OPTION == "--license" ]] ; then
+	license
 fi
 
 # Delete news
@@ -180,5 +297,4 @@ sed -i '/86400/,+9d' /usr/lib/portage/pym/_emerge/sync/old_tree_timestamp.py
 
 # Go back to the folder as before
 cd $currentPwd
-echo "-----------------------------------------------------------------------------------------------"
 echo ""
