@@ -142,9 +142,9 @@ fi
 	
 logoFOSSCloud
 echo ""
-echo "-----------------------------------------------------------------------------------------------"
+echo "$titleLine"
 echo "   Setting permission. Please be patient..."
-echo "-----------------------------------------------------------------------------------------------"
+echo "$titleLine"
 echo ""
 echo "   RUN       : Setting permission portage-overlay" 
 chmod 2755 /var/lib/layman/foss-cloud
