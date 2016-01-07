@@ -87,6 +87,49 @@ cat << \EOF >&1
 EOF
 }
 
+######################################################################################################
+# Variables
+######################################################################################################
+
+# Get the current date and store in the variable CURRENT_DATE in the form of "2015-11-28".
+CURRENT_DATE=`date +%Y-%m-%d`
+
+# Get the current date and store in the variable DATE in the form of "Son Nov 29 10:03:01 CET 2015".
+DATE="[$(date)]"
+
+# Get the fully qualified domain name (HOST) and store it in the variable HOST in the form of <hostname>.<domain>.tld
+FQDN=`hostname --fqdn`
+
+# Get the hostname and store it in the variable HOST the form of <hostname>.
+HOST=`hostname`
+
+# Set option attribute and argument out of the command line
+OPTION="$1"
+ATTRIBUTE="$2"
+ARGUMENT=$(echo $3 | sed 's:/$::')
+
+# Define screen variables
+CHECK="FC-CHECK   : "
+WARNING="FC-WARNING : "
+RUN="FC-RUN     : "
+INFO="FC-INFO    : "
+ERROR="FC-ERROR   : "
+
+# Define line
+titleLine="**********************************************************************************"
+
+# Define Graphic
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+VIOLET=$(tput setaf 5)
+LIGHTBLUE=$(tput setaf 6)
+BOLD=$(tput bold)
+UNDERLINE=$(tput sgr 0 1)
+NORMAL=$(tput sgr0)
+
+
 
 if [[ "$1" = "--license" ]] ; then
 	license
