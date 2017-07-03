@@ -199,10 +199,6 @@ fi
 
 logoFOSSCloud
 
-# Delete Warning message of "Last emerge --sync"
-sed -i '/86400/,+9d' /usr/lib/portage/pym/_emerge/sync/old_tree_timestamp.py
-# sed 's/"FOSS-Cloud\/portage-overlay.git"/"FOSS-Cloud\/fc-portage-overlay.git"/g' /var/lib/layman/foss-cloud/.git/config
-
 if [[ $OPTION == "--hard" ]] ; then
 
 	echo ""
@@ -291,9 +287,6 @@ fi
 # Delete news
 eselect news read --quiet
 eselect news purge
-
-# Delete Warning message of "Last emerge --sync"
-sed -i '/86400/,+9d' /usr/lib/portage/pym/_emerge/sync/old_tree_timestamp.py
 
 # Go back to the folder as before
 cd $currentPwd
