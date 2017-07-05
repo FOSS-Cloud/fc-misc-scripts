@@ -38,7 +38,8 @@ CAT_CMD=${CAT_CMD:="/bin/cat"}
 GREP_CMD=${GREP_CMD:="/bin/grep"}
 IP_CMD=${IP_CMD:="/bin/ip"}
 
-dev='eth0'
+dev=$(ip addr | grep "state UP" | cut -d " " -f 2  | cut -d ":" -f 1)
+
 issueFile="/etc/issue"
 
 echo > ${issueFile}
